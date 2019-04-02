@@ -1,0 +1,31 @@
+{
+  "name": "InvestmentCalculator",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "immutable": "^4.0.0-rc.12",
+    "lodash": "^4.17.11",
+    "react": "16.8.3",
+    "react-native": "0.59.3",
+    "react-native-keyboard-aware-scroll-view": "^0.8.0",
+    "react-navigation": "^3.6.0",
+    "react-redux": "^6.0.1",
+    "redux": "^4.0.1",
+    "redux-immutable": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/runtime": "^7.4.2",
+    "babel-jest": "^24.6.0",
+    "jest": "^24.6.0",
+    "metro-react-native-babel-preset": "^0.53.1",
+    "react-test-renderer": "16.8.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
