@@ -2,6 +2,12 @@
 #
 .DS_Store
 
+!**/*.xcodeproj
+!**/*.pbxproj
+!**/*.xcworkspacedata
+!**/*.xcsettings
+!**/*.xcscheme
+
 # Xcode
 #
 build/
@@ -22,6 +28,14 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
+Pods/
+
+ios/Pods/Manifest.lock
+ios/Pods/Podfile.lock
+
+# Root dir shouldn't have Xcode project
+/*.xcodeproj
+
 # Android/IntelliJ
 #
 build/
@@ -40,6 +54,7 @@ yarn-error.log
 buck-out/
 \.buckd/
 *.keystore
+*.jks
 
 # fastlane
 #
@@ -47,10 +62,4 @@ buck-out/
 # screenshots whenever they are needed.
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/
-
-*/fastlane/report.xml
-*/fastlane/Preview.html
-*/fastlane/screenshots
-
-# Bundle artifact
-*.jsbundle
+node_modules
