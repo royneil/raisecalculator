@@ -39,7 +39,9 @@ class Calculator extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
+   
     if (this.state !== prevState) {
+      const { post } = this.state
       const cleanObj = this.clean(this.state)
       if (cleanObj.length >= 2 && this.state.isCalculating) {
         this.calculations(prevState)
@@ -61,34 +63,42 @@ class Calculator extends Component {
     const items = [currentKey, prevKey]
 
     if (this.checkIncluding(items, 'invest', 'equity')) {
-      newState.post = (parseFloat(invest) / parseFloat(equity)) * 100
-      newState.pre = parseFloat(newState.post) - parseFloat(invest)
+      if (parseFloat(invest) > 0 && parseFloat(equity) > 0) {
+        newState.post = (parseFloat(invest) / parseFloat(equity)) * 100
+        newState.pre = parseFloat(newState.post) - parseFloat(invest)
+      }
     } else if (this.checkIncluding(items, 'invest', 'pre')) {
       newState.post = parseFloat(invest) +  parseFloat(pre)
       newState.equity = (parseFloat(invest) / parseFloat(newState.post)) * 100
     } else if (this.checkIncluding(items, 'invest', 'post')) {
-      newState.equity = parseFloat(invest) / parseFloat(post)
-      newState.pre = parseFloat(newState.post) - parseFloat(invest)
+      if (parseFloat(invest) > 0 && parseFloat(post) > 0) {
+        newState.equity = (parseFloat(invest) / parseFloat(post)) * 100
+        newState.pre = parseFloat(newState.post) - parseFloat(invest)
+      }
     }
     else if (this.checkIncluding(items, 'equity', 'pre')) {
-      newState.invest = (parseFloat(pre) * parseFloat(pre)) / (100 - parseFloat(pre))
-      newState.post = parseFloat(newState.invest) + parseFloat(pre)
+      if (parseFloat(equity) > 0 && parseFloat(equity) > 0) {
+        newState.post = 100 * parseFloat(pre) / (100 - parseFloat(equity))
+        newState.invest = (parseFloat(equity) * parseFloat(newState.post)) / 100
+      }
     }
     else if (this.checkIncluding(items, 'pre', 'post')) {
-      newState.invest = parseFloat(post) - parseFloat(pre)
-      newState.equity = (parseFloat(newState.invest) / parseFloat(post)) * 100
+      if (parseFloat(pre) > 0 && parseFloat(post) > 0) {
+        newState.invest = parseFloat(post) - parseFloat(pre)
+        newState.equity = (parseFloat(newState.invest) / parseFloat(post)) * 100
+      }
     }
     else if (this.checkIncluding(items, 'post', 'equity')) {
-      newState.invest = parseFloat(post) * parseFloat(equity) * 100
+      newState.invest = (parseFloat(post) * parseFloat(equity)) / 100
       newState.pre = parseFloat(post) - parseFloat(newState.invest)
     } else {
       console.log('Nothing')
     }
 
-      let newInvest = newState.invest.toString().slice(0, (newState.invest.toString().indexOf('.'))+ 10)
-      let newEquity = newState.equity.toString().slice(0, (newState.equity.toString().indexOf('.'))+ 6)
-      let newPre = newState.pre.toString().slice(0, (newState.pre.toString().indexOf('.'))+ 10)
-      let newPost = newState.post.toString().slice(0, (newState.post.toString().indexOf('.'))+ 10)
+      let newInvest = newState.invest.toString().slice(0, (newState.invest.toString().indexOf('.'))+ 15)
+      let newEquity = newState.equity.toString().slice(0, (newState.equity.toString().indexOf('.'))+ 10)
+      let newPre = newState.pre.toString().slice(0, (newState.pre.toString().indexOf('.'))+ 15)
+      let newPost = newState.post.toString().slice(0, (newState.post.toString().indexOf('.'))+ 15)
       
       
       this.setState({
@@ -117,13 +127,15 @@ class Calculator extends Component {
   
   renderInvest = _ => {
     const { invest } = this.state
+    let newInvest = invest.slice(0, (invest.indexOf('.'))+ 15)
+    newInvest = this.numberWithCommas(newInvest)
     return (
       <Input
         title='Invest'
         unit='$'
         onChangeText={text => this.setState({ invest: text })}
         ref={ref => this.investRef = ref}
-        value={this.numberWithCommas(invest)}
+        value={newInvest}
         onSetCurrentFocus={this.setCurrentFocus}
         name='invest'
         style={{
@@ -158,7 +170,7 @@ class Calculator extends Component {
 
   renderPre = _ => {
     const { pre } = this.state
-    let newPre = pre.slice(0, (pre.indexOf('.')) + 10)
+    let newPre = pre.slice(0, (pre.indexOf('.')) + 15)
     newPre = this.numberWithCommas(newPre)
 
     return (
@@ -179,7 +191,7 @@ class Calculator extends Component {
 
   renderPost = _ => {
     const { post, } = this.state
-    let newPost = post.slice(0, (post.indexOf('.')) + 10)
+    let newPost = post.slice(0, (post.indexOf('.')) + 15)
     newPost = this.numberWithCommas(newPost)
     return (
       <Input
@@ -215,8 +227,6 @@ class Calculator extends Component {
 
   onDeleteHandler = _ => {
     const { currentFocus } = this.state
-    
-    
     this.setState(prevState => {
       if (!this.state[currentFocus].slice(0, -1)) {
         const { previousFocus } = this.state
