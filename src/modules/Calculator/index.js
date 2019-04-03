@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Keyboard
 } from 'react-native'
 import Header from '../../components/Header';
 import Input from '../../components/Input/index'
@@ -83,6 +84,7 @@ class Calculator extends Component {
     } else {
       console.log('Nothing')
     }
+
       let newInvest = newState.invest.toString().slice(0, (newState.invest.toString().indexOf('.'))+ 10)
       let newEquity = newState.equity.toString().slice(0, (newState.equity.toString().indexOf('.'))+ 6)
       let newPre = newState.pre.toString().slice(0, (newState.pre.toString().indexOf('.'))+ 10)
@@ -124,6 +126,9 @@ class Calculator extends Component {
         value={this.numberWithCommas(invest)}
         onSetCurrentFocus={this.setCurrentFocus}
         name='invest'
+        style={{
+          borderBottomColor: this.state.currentFocus === 'invest' ?  Constant.colors.black : Constant.colors.lighterGray,
+        }}  
       />
     )
   }
@@ -143,6 +148,10 @@ class Calculator extends Component {
         onSetCurrentFocus={this.setCurrentFocus}
         name='equity'
         ref={ref => this.equityRef = ref}
+        style={{
+          borderBottomColor: this.state.currentFocus === 'equity' ?  Constant.colors.black : Constant.colors.lighterGray,
+        }}  
+
       />
     )
   }
@@ -161,6 +170,9 @@ class Calculator extends Component {
         value={newPre}
         name='pre'
         ref={ref => this.preRef = ref}
+        style={{
+          borderBottomColor: this.state.currentFocus === 'pre' ?  Constant.colors.black : Constant.colors.lighterGray,
+        }}  
       />
     )
   }
@@ -178,6 +190,9 @@ class Calculator extends Component {
         onSetCurrentFocus={this.setCurrentFocus}
         name='post'
         ref={ref => this.postRef = ref}
+        style={{
+          borderBottomColor: this.state.currentFocus === 'post' ?  Constant.colors.black : Constant.colors.lighterGray,
+        }}  
       />
     )
   }
@@ -203,7 +218,7 @@ class Calculator extends Component {
     
     
     this.setState(prevState => {
-      if (!prevState[currentFocus].slice(0, -1)) {
+      if (!this.state[currentFocus].slice(0, -1)) {
         const { previousFocus } = this.state
         const prevNumber = this.state[previousFocus]
 

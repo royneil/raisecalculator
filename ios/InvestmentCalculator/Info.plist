@@ -62,6 +62,8 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -69,91 +71,12 @@
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-  <key>UILaunchImages</key>
-  <array>
-    <dict>
-      <key>UILaunchImageMinimumOSVersion</key>
-      <string>7.0</string>
-      <key>UILaunchImageName</key>
-      <string>Img320x568ptsPort@2x</string>
-      <key>UILaunchImageOrientation</key>
-      <string>Landscape</string>
-      <key>UILaunchImageSize</key>
-      <string>{320, 568}</string>
-    </dict>
-    <dict>
-      <key>UILaunchImageMinimumOSVersion</key>
-      <string>7.0</string>
-      <key>UILaunchImageName</key>
-      <string>Img320x568ptsLdsc@2x</string>
-      <key>UILaunchImageOrientation</key>
-      <string>Portrait</string>
-      <key>UILaunchImageSize</key>
-      <string>{320, 568}</string>
-    </dict>
-    <dict>
-      <key>UILaunchImageMinimumOSVersion</key>
-      <string>7.0</string>
-      <key>UILaunchImageName</key>
-      <string>Img320x480ptsPort@2x</string>
-      <key>UILaunchImageOrientation</key>
-      <string>Landscape</string>
-      <key>UILaunchImageSize</key>
-      <string>{320, 480}</string>
-    </dict>
-    <dict>
-      <key>UILaunchImageMinimumOSVersion</key>
-      <string>7.0</string>
-      <key>UILaunchImageName</key>
-      <string>Img320x480ptsLdsc@2x</string>
-      <key>UILaunchImageOrientation</key>
-      <string>Portrait</string>
-      <key>UILaunchImageSize</key>
-      <string>{320, 480}</string>
-    </dict>
-    <dict>
-      <key>UILaunchImageMinimumOSVersion</key>
-      <string>8.0</string>
-      <key>UILaunchImageName</key>
-      <string>Img375x667ptsPort@2x</string>
-      <key>UILaunchImageOrientation</key>
-      <string>Landscape</string>
-      <key>UILaunchImageSize</key>
-      <string>{375, 667}</string>
-    </dict>
-    <dict>
-      <key>UILaunchImageMinimumOSVersion</key>
-      <string>8.0</string>
-      <key>UILaunchImageName</key>
-      <string>Img375x667ptsLdsc@2x</string>
-      <key>UILaunchImageOrientation</key>
-      <string>Portrait</string>
-      <key>UILaunchImageSize</key>
-      <string>{375, 667}</string>
-    </dict>
-    <dict>
-      <key>UILaunchImageMinimumOSVersion</key>
-      <string>8.0</string>
-      <key>UILaunchImageName</key>
-      <string>Img414x736ptsLdsc@3x</string>
-      <key>UILaunchImageOrientation</key>
-      <string>Landscape</string>
-      <key>UILaunchImageSize</key>
-      <string>{414, 736}</string>
-    </dict>
-    <dict>
-      <key>UILaunchImageMinimumOSVersion</key>
-      <string>8.0</string>
-      <key>UILaunchImageName</key>
-      <string>Img414x736ptsPort@3x</string>
-      <key>UILaunchImageOrientation</key>
-      <string>Portrait</string>
-      <key>UILaunchImageSize</key>
-      <string>{414, 736}</string>
-    </dict>
-  </array>
+  <key>UIRequiresFullScreen</key>
+  <true/>
 </dict>
 </plist>

@@ -5,8 +5,11 @@ import {
   View,
   Text,
   Platform,
+  Keyboard,
+  TouchableOpacity
 } from 'react-native'
 import Constant from '../../utils/Constants';
+
 
 const Input = React.forwardRef((props, ref) => {
 
@@ -17,22 +20,25 @@ const Input = React.forwardRef((props, ref) => {
         <Text style={styles.title}>{props.title}</Text>
         <TextInput
           {...props}
-          ref={ref}
-          underlineColorAndroid={'transparent'}
-          style={[
-            styles.textInput,
-            {
-              borderBottomColor: inputs.isFocus ? Constant.colors.black : Constant.colors.lighterGray,
-            }
-          ]}
-          keyboardType={'numeric'}
-          onFocus={_ => {
-            setInput({ isFocus: true })
-            props.onSetCurrentFocus(props.name)
-          }}
-          onBlur={_ => setInput({ isFocus: false })}
-        />
-
+            ref={ref}
+            underlineColorAndroid={'transparent'}
+            style={[
+              styles.textInput,
+              props.style,
+            ]}
+            keyboardType={'numeric'}
+            onFocus={_ => {
+              Keyboard.dismiss()
+              setInput({ isFocus: true })
+              props.onSetCurrentFocus(props.name)  
+            }}
+              onBlur={_ => {
+                Keyboard.dismiss()
+                setInput({ isFocus: false })
+              }}
+              contextMenuHidden={true}
+              returnKeyType={'next'}
+            />
         <Text style={styles.unit}>{props.unit}</Text>
       </View>
 
