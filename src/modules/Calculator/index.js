@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
 } from 'react-native'
 import Header from '../../components/Header';
 import Input from '../../components/Input/index'
@@ -19,14 +18,17 @@ class Calculator extends Component {
       equity: '',
       pre: '',
       post: '',
-      currentFocus: 'invest'
+      currentFocus: 'invest',
+      previousFocus: '',
+      isCalculating: false
     }
   }
 
   clean = (obj) => {
     let newState = Object.assign({}, obj)
     delete newState['currentFocus']
-
+    delete newState['previousFocus']
+    delete newState['isCalculating']
     for (var propName in obj) { 
       if (newState[propName] === null || newState[propName] === undefined || newState[propName] === '') {
         delete newState[propName];
@@ -36,67 +38,76 @@ class Calculator extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    const { invest, equity, pre, post, currentFocus } = this.state
-    let newState = Object.assign({}, this.state)
-  
-    const currentKey = currentFocus
-    const prevKey = prevState.currentFocus
-    console.log('PREVSTATE', prevState)
-    console.log('THIS STAE', this.state)
-
     if (this.state !== prevState) {
-      // const cleanObj = this.clean(prevState)
-      // if (cleanObj.length === 4 ) {
-      //   const { currentFocus } = this.state
-
-      //   const oldValue = this.state[currentFocus]
-      //   const newState = Object.assign({
-      //     invest: '',
-      //     equity: '',
-      //     pre: '',
-      //     post: '',
-      //     currentFocus: ''
-      //   }, { [currentFocus]: oldValue, currentFocus })
-
-      //   this.setState({
-      //     invest: newState.invest,
-      //     equity: newState.equity,
-      //     pre: newState.pre,
-      //     post: newState.post,
-      //     currentFocus: newState.currentFocus
-      //   })
-      // }
-    this.calculations(prevState)
+      const cleanObj = this.clean(this.state)
+      if (cleanObj.length >= 2 && this.state.isCalculating) {
+        this.calculations(prevState)
+      }
     }
   };
 
+  checkIncluding =(items, key1, key2) => {
+    return items.includes(key1) && items.includes(key2)
+  }
+
   calculations = prevState => {
-    const { invest, equity, pre, post, currentFocus } = this.state
+    const { invest, equity, pre, post, currentFocus, previousFocus } = this.state
     let newState = Object.assign({}, this.state)
   
     const currentKey = currentFocus
-    const prevKey = prevState.currentFocus
-   
-    switch (`${prevKey}, ${currentKey}`) {
-      case "invest, equity":
+    const prevKey = previousFocus
 
-        newState.post = (parseFloat(invest) / parseFloat(equity)) * 100
-        newState.pre = parseFloat(newState.post) - parseFloat(invest)
+    const items = [currentKey, prevKey]
 
-        console.log('CHECK STATE', (parseFloat(newState.invest) / parseFloat(newState.equity)) * 100)
-        break;
-    
-      default:
-        break;
+    if (this.checkIncluding(items, 'invest', 'equity')) {
+      newState.post = (parseFloat(invest) / parseFloat(equity)) * 100
+      newState.pre = parseFloat(newState.post) - parseFloat(invest)
+    } else if (this.checkIncluding(items, 'invest', 'pre')) {
+      newState.post = parseFloat(invest) +  parseFloat(pre)
+      newState.equity = (parseFloat(invest) / parseFloat(newState.post)) * 100
+    } else if (this.checkIncluding(items, 'invest', 'post')) {
+      newState.equity = parseFloat(invest) / parseFloat(post)
+      newState.pre = parseFloat(newState.post) - parseFloat(invest)
     }
-    console.log("newState---->", newState)
+    else if (this.checkIncluding(items, 'equity', 'pre')) {
+      newState.invest = (parseFloat(pre) * parseFloat(pre)) / (100 - parseFloat(pre))
+      newState.post = parseFloat(newState.invest) + parseFloat(pre)
+    }
+    else if (this.checkIncluding(items, 'pre', 'post')) {
+      newState.invest = parseFloat(post) - parseFloat(pre)
+      newState.equity = (parseFloat(newState.invest) / parseFloat(post)) * 100
+    }
+    else if (this.checkIncluding(items, 'post', 'equity')) {
+      newState.invest = parseFloat(post) * parseFloat(equity) * 100
+      newState.pre = parseFloat(post) - parseFloat(newState.invest)
+    } else {
+      console.log('Nothing')
+    }
+      let newInvest = newState.invest.toString().slice(0, (newState.invest.toString().indexOf('.'))+ 10)
+      let newEquity = newState.equity.toString().slice(0, (newState.equity.toString().indexOf('.'))+ 6)
+      let newPre = newState.pre.toString().slice(0, (newState.pre.toString().indexOf('.'))+ 10)
+      let newPost = newState.post.toString().slice(0, (newState.post.toString().indexOf('.'))+ 10)
+      
+      
+      this.setState({
+        invest: newInvest,
+        equity: newEquity,
+        pre: newPre,
+        post: newPost,
+        currentFocus,
+        isCalculating: false
+      })
   }
   
 
   setCurrentFocus = name => {
-    this.setState({
-      currentFocus: name
-    })
+    const { currentFocus } = this.state
+    if (currentFocus !== name) {
+      this.setState({
+        currentFocus: name,
+        previousFocus: currentFocus
+      })
+    }
   }
   numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -119,7 +130,7 @@ class Calculator extends Component {
 
   renderEquity = _ => {
     const { equity } = this.state
-    let newEquity = equity.slice(0, (equity.indexOf('.'))+6)
+    let newEquity = equity.slice(0, (equity.indexOf('.'))+ 10)
     newEquity = this.numberWithCommas(newEquity)
 
     return (
@@ -154,7 +165,7 @@ class Calculator extends Component {
     )
   }
 
-    renderPost = _ => {
+  renderPost = _ => {
     const { post, } = this.state
     let newPost = post.slice(0, (post.indexOf('.')) + 10)
     newPost = this.numberWithCommas(newPost)
@@ -184,81 +195,34 @@ class Calculator extends Component {
   onPressHandler = number => {
     const { currentFocus } = this.state
     const prevNumber = this.state[currentFocus] || ""
-    this.setState({ [currentFocus]: prevNumber + String(number)})
+    this.setState({ [currentFocus]: prevNumber + String(number), isCalculating: true })
   }
 
   onDeleteHandler = _ => {
     const { currentFocus } = this.state
-    const prevNumber = this.state[currentFocus] || ""
+    
+    
     this.setState(prevState => {
-      return {[currentFocus]: prevState[currentFocus].slice(0, -1)}
+      if (!prevState[currentFocus].slice(0, -1)) {
+        const { previousFocus } = this.state
+        const prevNumber = this.state[previousFocus]
+
+        const newObj = Object.assign({
+          invest: '',
+          equity: '',
+          pre: '',
+          post: '',
+          currentFocus: 'invest',
+          previousFocus: '',
+          isCalculating: false
+        }, {currentFocus, previousFocus, [previousFocus]: prevNumber})
+        
+        return newObj
+      } else {
+        return {[currentFocus]: prevState[currentFocus].slice(0, -1), isCalculating: true }
+      }
     })
   }
-  calculation = () => {
-    const cleanObj = this.clean(this.state)
-    const { invest, equity, pre, post, currentFocus } = this.state
-
-    let newState = Object.assign({}, this.state)
-    delete newState['currentFocus']
-  
-    if  (cleanObj.length >= 2) {
-      console.log('CHECK CLEARN OBJ', cleanObj)
-      switch (cleanObj.join(', ')) {
-        case "invest, equity":
-          newState.post = (parseFloat(invest) / parseFloat(equity)) * 100
-          newState.pre = parseFloat(newState.post) - parseFloat(invest)
-          break;
-        case "invest, pre":
-          newState.post = parseFloat(invest) +  parseFloat(pre)
-          newState.equity = (parseFloat(invest) / parseFloat(newState.post)) * 100
-          break;
-        case "invest, post":
-          newState.equity = parseFloat(invest) / parseFloat(post)
-          newState.pre = parseFloat(newState.post) - parseFloat(invest)
-          break;
-        case "pre, equity":
-          break;
-        case "pre, post":
-          newState.invest = parseFloat(post) - parseFloat(pre)
-          newState.equity = (parseFloat(newState.invest) / parseFloat(post)) * 100
-        case "post, equity":
-          newState.invest = parseFloat(post) * parseFloat(equity) * 100
-          newState.pre = parseFloat(post) - parseFloat(newState.invest)
-          break;
-        default: /** "pre", "equity" **/
-          // Alert.alert(
-          //   'Wrong Value',
-          //   'Please input again',
-          //   [
-          //     {
-          //       text: 'OK',
-          //       onPress: _ =>  this.setState({
-          //         invest: '',
-          //         equity: '',
-          //         pre: '',
-          //         post: '',
-          //       }),
-          //     },
-          //   ],
-          //   { cancelable: false }
-          // )
-
-          break;
-      }
-
-      let newPre = newState.pre.toString().slice(0, (newState.pre.toString().indexOf('.'))+ 11)
-      let newPost = newState.post.toString().slice(0, (newState.post.toString().indexOf('.'))+ 11)
-      this.setState({
-        invest: newState.invest.toString(),
-        equity: newState.equity.toString(),
-        pre: newPre,
-        post: newPost,
-        currentFocus,
-      })
-      console.log("newState---->", newState)
-    }
-  }
-
 
   renderClearPart = _ => {
     return (

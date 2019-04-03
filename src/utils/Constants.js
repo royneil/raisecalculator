@@ -24,9 +24,9 @@ export default {
   colors: {
     primary: '#231f20',
     white: '#fff',
-    black: '#000',
-    lighterGray: '#E9E9E9',
-    darkerGray: '#9B9B9B',
+    black: '#13192E',
+    lighterGray: 'rgba(19, 25, 46, 0.4)',
+    darkerGray: 'rgba(19, 25, 46, 0.4)',
   },
   layout: {
     screenWidth: Dimensions.get('window').width,

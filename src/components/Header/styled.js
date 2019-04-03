@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     backgroundColor: Constant.colors.white
   },
   headerText: {
-    color: Constant.colors.primary,
+    color: Constant.colors.black,
     fontSize: 32,
     marginTop: 50,
     fontFamily: 'Rubik-Medium',
