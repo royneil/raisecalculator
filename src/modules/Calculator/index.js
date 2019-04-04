@@ -64,28 +64,48 @@ class Calculator extends Component {
 
     if (this.checkIncluding(items, 'invest', 'equity')) {
       if (parseFloat(invest) > 0 && parseFloat(equity) > 0) {
-        newState.post = (parseFloat(invest) / parseFloat(equity)) * 100
-        newState.pre = parseFloat(newState.post) - parseFloat(invest)
+       
+       let newPost = (parseFloat(invest) / parseFloat(equity)) * 100
+       let newPre = parseFloat(newPost) - parseFloat(invest)
+       if (invest.length === 1 && equity.length >= 2) {
+         newPost = newPost.toString().slice(0, (newPost.toString().indexOf('.')) + 3)
+         newPre = newPre.toString().slice(0, (newPre.toString().indexOf('.')) + 3)
+       }
+        newState.post = newPost
+        newState.pre = newPre
       }
     } else if (this.checkIncluding(items, 'invest', 'pre')) {
+
       newState.post = parseFloat(invest) +  parseFloat(pre)
-      newState.equity = (parseFloat(invest) / parseFloat(newState.post)) * 100
+
+      let newEquity = (parseFloat(invest) / parseFloat(newState.post)) * 100
+      newEquity = newEquity.toString().slice(0, (newEquity.toString().indexOf('.')) + 5)
+      newState.equity = newEquity
+
     } else if (this.checkIncluding(items, 'invest', 'post')) {
       if (parseFloat(invest) > 0 && parseFloat(post) > 0) {
-        newState.equity = (parseFloat(invest) / parseFloat(post)) * 100
+        let newEquity = (parseFloat(invest) / parseFloat(post)) * 100
+        newEquity = newEquity.toString().slice(0, (newEquity.toString().indexOf('.')) + 7)
+        newState.equity = newEquity
         newState.pre = parseFloat(newState.post) - parseFloat(invest)
       }
     }
     else if (this.checkIncluding(items, 'equity', 'pre')) {
       if (parseFloat(equity) > 0 && parseFloat(equity) > 0) {
-        newState.post = 100 * parseFloat(pre) / (100 - parseFloat(equity))
-        newState.invest = (parseFloat(equity) * parseFloat(newState.post)) / 100
+        let newPost = 100 * parseFloat(pre) / (100 - parseFloat(equity))
+        newPost = newPost.toString().slice(0, (newPost.toString().indexOf('.')) + 3)
+        newState.post = newPost
+        let newInvest = (parseFloat(equity) * parseFloat(newState.post)) / 100
+        newState.invest = newInvest.toString().slice(0, (newInvest.toString().indexOf('.')) + 3)
       }
     }
     else if (this.checkIncluding(items, 'pre', 'post')) {
       if (parseFloat(pre) > 0 && parseFloat(post) > 0) {
         newState.invest = parseFloat(post) - parseFloat(pre)
-        newState.equity = (parseFloat(newState.invest) / parseFloat(post)) * 100
+
+        let newEquity = (parseFloat(newState.invest) / parseFloat(post)) * 100
+        newEquity = newEquity.toString().slice(0, (newEquity.toString().indexOf('.')) + 4)
+        newState.equity = newEquity
       }
     }
     else if (this.checkIncluding(items, 'post', 'equity')) {
@@ -93,19 +113,13 @@ class Calculator extends Component {
       newState.pre = parseFloat(post) - parseFloat(newState.invest)
     } else {
       console.log('Nothing')
-    }
-
-      let newInvest = newState.invest.toString().slice(0, (newState.invest.toString().indexOf('.'))+ 15)
-      let newEquity = newState.equity.toString().slice(0, (newState.equity.toString().indexOf('.'))+ 10)
-      let newPre = newState.pre.toString().slice(0, (newState.pre.toString().indexOf('.'))+ 15)
-      let newPost = newState.post.toString().slice(0, (newState.post.toString().indexOf('.'))+ 15)
-      
+    }      
       
       this.setState({
-        invest: newInvest,
-        equity: newEquity,
-        pre: newPre,
-        post: newPost,
+        invest: newState.invest.toString(),
+        equity: newState.equity.toString(),
+        pre: newState.pre.toString(),
+        post: newState.post.toString(),
         currentFocus,
         isCalculating: false
       })
@@ -127,8 +141,7 @@ class Calculator extends Component {
   
   renderInvest = _ => {
     const { invest } = this.state
-    let newInvest = invest.slice(0, (invest.indexOf('.'))+ 15)
-    newInvest = this.numberWithCommas(newInvest)
+    let newInvest = this.numberWithCommas(invest)
     return (
       <Input
         title='Invest'
@@ -155,7 +168,7 @@ class Calculator extends Component {
         title='Equity'
         unit='%'
         onChangeText={text => this.setState({ equity: text })}
-        value={newEquity}
+        value={equity}
         ref={ref => this.equityRef = ref}
         onSetCurrentFocus={this.setCurrentFocus}
         name='equity'
@@ -170,8 +183,7 @@ class Calculator extends Component {
 
   renderPre = _ => {
     const { pre } = this.state
-    let newPre = pre.slice(0, (pre.indexOf('.')) + 15)
-    newPre = this.numberWithCommas(newPre)
+    let newPre = this.numberWithCommas(pre)
 
     return (
       <Input
@@ -191,8 +203,7 @@ class Calculator extends Component {
 
   renderPost = _ => {
     const { post, } = this.state
-    let newPost = post.slice(0, (post.indexOf('.')) + 15)
-    newPost = this.numberWithCommas(newPost)
+    let newPost = this.numberWithCommas(post)
     return (
       <Input
         title='Post'

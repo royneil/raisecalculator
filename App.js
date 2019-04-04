@@ -10,18 +10,17 @@ import React, {Component} from 'react';
 import { View, StyleSheet } from 'react-native';
 import Constant from './src/utils/Constants';
 import AppNavigation from './src/navigations/index'
+import SplashScreen from './src/components/SplashScreen';
 
 export default class App extends Component {
-
   render() {
-    return (
-      <View style={styles.container}>
-        <AppNavigation />
-      </View>
-    );
+      return (
+        <View style={styles.container}>
+          <AppNavigation />
+        </View>
+      );
+    } 
   }
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

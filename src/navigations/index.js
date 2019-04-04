@@ -7,7 +7,7 @@ const AppNavigation = createStackNavigator({
   Calculator: CalculatorScreen,
 }, {
   headerMode: 'none',
-  initialRouteName: 'Calculator'
+  initialRouteName: 'Splash'
 })
 
 export default createAppContainer(AppNavigation)
