@@ -64,29 +64,28 @@ export default class KeyBoard extends Component {
 
 const styles = StyleSheet.create({
   keyPad: {
-    flex: 1,
+    flex: 0.9,
     justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: Constant.colors.white,
-    padding: 10,
   },
   keyPadRow: {
+    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
-    borderBottomColor: Constant.colors.lighterGray,
+    borderBottomColor: Constant.colors.lightGray,
     borderBottomWidth: 1,
-    paddingBottom: 10
+
   },
   keyPadLastdRow: {
     flexDirection: 'row',
     borderBottomColor: 'transparent',
     borderBottomWidth: 1,
+    marginTop: 30
   },
   keyPadItem: {
     flex: 1,
     alignItems: 'center',
-    paddingBottom: 10,
   },
   keyPadText: {
     color: Constant.colors.darkerGray,

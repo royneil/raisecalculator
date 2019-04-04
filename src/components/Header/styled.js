@@ -4,16 +4,17 @@ import Constant from '../../utils/Constants'
 const styles = StyleSheet.create({
   header: {
     width: '100%',
-    backgroundColor: Constant.colors.white
+    backgroundColor: Constant.colors.white,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 60,
   },
-  headerText: {
-    color: Constant.colors.black,
-    fontSize: 32,
-    marginTop: 50,
-    fontFamily: 'Rubik-Medium',
-    textAlign: 'center',
-    letterSpacing: 6,
-  },
+  logo: {
+    width: '100%',
+    height: '100%'
+  }
 })
 
 export default styles

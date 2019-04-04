@@ -26,6 +26,7 @@ export default {
     white: '#fff',
     black: '#13192E',
     lighterGray: 'rgba(19, 25, 46, 0.4)',
+    lightGray: 'rgb(216, 216, 216)',
     darkerGray: 'rgba(19, 25, 46, 0.4)',
   },
   layout: {

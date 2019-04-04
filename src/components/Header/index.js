@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, Image } from 'react-native'
 import styles from './styled'
 
 export default class Header extends Component {
@@ -10,9 +10,11 @@ export default class Header extends Component {
     } = this.props
     return (
       <View style={[styles.header, style ]}>
-        <Text style={styles.headerText}>
-          {children}
-        </Text>
+         <Image
+          source={require('../../assets/logo/Logo.png')}
+          resizeMode='contain' 
+          style={styles.splash}
+        />
       </View>
     )
   }

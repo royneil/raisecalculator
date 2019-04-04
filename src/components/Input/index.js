@@ -55,26 +55,26 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderStyle: 'solid',
-    borderBottomWidth: 1.5,
+    borderBottomWidth: 1,
     width: '100%',
     height: Platform.OS === 'ios' ? 45 : 50,
     paddingRight: 30,
     paddingLeft: 60,
     textAlign: 'right',
-    fontFamily: 'Rubik-Medium',
-    fontSize: 25
+    fontSize: 25,
+    fontFamily: 'Rubik-Medium'
   },
   title: {
     fontFamily: 'Rubik-LightItalic',
     textTransform: 'uppercase',
-    fontSize: 15,
+    fontSize: 13,
     letterSpacing: 1,
     position: 'absolute',
     color: Constant.colors.black
   },
   unit: {
     textTransform: 'uppercase',
-    fontSize: 21,
+    fontSize: 20,
     position: 'absolute',
     right: 0,
     fontFamily: 'Rubik-Medium'

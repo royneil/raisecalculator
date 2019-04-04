@@ -21,7 +21,7 @@ class Calculator extends Component {
       post: '',
       currentFocus: 'invest',
       previousFocus: '',
-      isCalculating: false
+      isCalculating: false,
     }
   }
 
@@ -49,7 +49,7 @@ class Calculator extends Component {
     }
   };
 
-  checkIncluding =(items, key1, key2) => {
+  checkIncluding = (items, key1, key2) => {
     return items.includes(key1) && items.includes(key2)
   }
 
@@ -63,6 +63,7 @@ class Calculator extends Component {
     const items = [currentKey, prevKey]
 
     if (this.checkIncluding(items, 'invest', 'equity')) {
+    
       if (parseFloat(invest) > 0 && parseFloat(equity) > 0) {
        
        let newPost = (parseFloat(invest) / parseFloat(equity)) * 100
@@ -83,6 +84,7 @@ class Calculator extends Component {
       newState.equity = newEquity
 
     } else if (this.checkIncluding(items, 'invest', 'post')) {
+    
       if (parseFloat(invest) > 0 && parseFloat(post) > 0) {
         let newEquity = (parseFloat(invest) / parseFloat(post)) * 100
         newEquity = newEquity.toString().slice(0, (newEquity.toString().indexOf('.')) + 7)
@@ -91,6 +93,7 @@ class Calculator extends Component {
       }
     }
     else if (this.checkIncluding(items, 'equity', 'pre')) {
+    
       if (parseFloat(equity) > 0 && parseFloat(equity) > 0) {
         let newPost = 100 * parseFloat(pre) / (100 - parseFloat(equity))
         newPost = newPost.toString().slice(0, (newPost.toString().indexOf('.')) + 3)
@@ -100,6 +103,7 @@ class Calculator extends Component {
       }
     }
     else if (this.checkIncluding(items, 'pre', 'post')) {
+    
       if (parseFloat(pre) > 0 && parseFloat(post) > 0) {
         newState.invest = parseFloat(post) - parseFloat(pre)
 
@@ -109,6 +113,7 @@ class Calculator extends Component {
       }
     }
     else if (this.checkIncluding(items, 'post', 'equity')) {
+    
       newState.invest = (parseFloat(post) * parseFloat(equity)) / 100
       newState.pre = parseFloat(post) - parseFloat(newState.invest)
     } else {
@@ -138,9 +143,9 @@ class Calculator extends Component {
   numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-  
+
   renderInvest = _ => {
-    const { invest } = this.state
+    const { invest, currentFocus } = this.state
     let newInvest = this.numberWithCommas(invest)
     return (
       <Input
@@ -152,14 +157,14 @@ class Calculator extends Component {
         onSetCurrentFocus={this.setCurrentFocus}
         name='invest'
         style={{
-          borderBottomColor: this.state.currentFocus === 'invest' ?  Constant.colors.black : Constant.colors.lighterGray,
+          borderBottomColor: currentFocus === 'invest' ?  Constant.colors.black : Constant.colors.lightGray,
         }}  
       />
     )
   }
 
   renderEquity = _ => {
-    const { equity } = this.state
+    const { equity, currentFocus } = this.state
     let newEquity = equity.slice(0, (equity.indexOf('.'))+ 10)
     newEquity = this.numberWithCommas(newEquity)
 
@@ -174,7 +179,7 @@ class Calculator extends Component {
         name='equity'
         ref={ref => this.equityRef = ref}
         style={{
-          borderBottomColor: this.state.currentFocus === 'equity' ?  Constant.colors.black : Constant.colors.lighterGray,
+          borderBottomColor: currentFocus === 'equity' ?  Constant.colors.black : Constant.colors.lightGray,
         }}  
 
       />
@@ -195,14 +200,14 @@ class Calculator extends Component {
         name='pre'
         ref={ref => this.preRef = ref}
         style={{
-          borderBottomColor: this.state.currentFocus === 'pre' ?  Constant.colors.black : Constant.colors.lighterGray,
+          borderBottomColor: this.state.currentFocus === 'pre' ?  Constant.colors.black : Constant.colors.lightGray,
         }}  
       />
     )
   }
 
   renderPost = _ => {
-    const { post, } = this.state
+    const { post } = this.state
     let newPost = this.numberWithCommas(post)
     return (
       <Input
@@ -214,7 +219,7 @@ class Calculator extends Component {
         name='post'
         ref={ref => this.postRef = ref}
         style={{
-          borderBottomColor: this.state.currentFocus === 'post' ?  Constant.colors.black : Constant.colors.lighterGray,
+          borderBottomColor: this.state.currentFocus === 'post' ?  Constant.colors.black : Constant.colors.lightGray,
         }}  
       />
     )
@@ -274,7 +279,7 @@ class Calculator extends Component {
         <TouchableOpacity
           onPress={_ => this.onDeleteHandler()}
         >
-          <Text style={styles.clearText}>Delete</Text>
+          <Text style={styles.deleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
     )
@@ -282,9 +287,7 @@ class Calculator extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Header>
-          RAI$E
-        </Header>
+        <Header />
         <View style={styles.calculatorWrapper}>
         <View style={styles.inputWrapper}>
           {this.renderInvest()}
@@ -314,7 +317,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    marginTop: 10
   },
   inputWrapper: {
     flex: 3.5,
@@ -335,10 +337,13 @@ const styles = StyleSheet.create({
   clearText: {
     fontFamily: 'Rubik-BoldItalic',
     textTransform: 'uppercase',
+    fontSize: 14
   },
   deleteText: {
     fontFamily: 'Rubik-BoldItalic',
     textTransform: 'uppercase',
+    color: 'grey',
+    fontSize: 14
   },
   keyboardWrapper: {
     flex: 5,
