@@ -4,8 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Keyboard
 } from 'react-native'
+import _ from 'lodash';
 import Header from '../../components/Header';
 import Input from '../../components/Input/index'
 import KeyBoard from '../../components/Keyboard';
@@ -24,7 +24,7 @@ class Calculator extends Component {
       isCalculating: false,
     }
   }
-
+  
   clean = (obj) => {
     let newState = Object.assign({}, obj)
     delete newState['currentFocus']
@@ -39,7 +39,7 @@ class Calculator extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-   
+  
     if (this.state !== prevState) {
       const { post } = this.state
       const cleanObj = this.clean(this.state)
@@ -53,6 +53,40 @@ class Calculator extends Component {
     return items.includes(key1) && items.includes(key2)
   }
 
+  convertExpo = n => {
+    var [lead,decimal,pow] = n.toString().split(/e|\./);
+    return +pow <= 0 
+        ? "0." + "0".repeat(Math.abs(pow)-1) + lead + decimal
+        : lead + ( +pow >= decimal.length ? (decimal + "0".repeat(+pow-decimal.length)) : (decimal.slice(0,+pow)+"."+decimal.slice(+pow)))
+  }
+
+  roundNumber = number => {
+    const isExpo = /[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)/g
+    if (isExpo.test(number)) {
+      return this.convertExpo(number)
+    }
+
+    return newNumber = Number(Math.round(number + 'e2') + 'e-2')
+  }
+
+  addZero = number => {
+    const dotIndex = number.indexOf('.')
+
+    if (dotIndex > -1) {
+      const subString = number.substring(dotIndex + 1, number.length)
+      if (subString && subString.length === 1 && subString !== '.') {
+        return number + '0'
+      }
+    }
+    return number
+  }
+
+  removeArray(arr, items) {
+    return arr.filter(function(ele){
+        return !items.includes(ele)
+    });
+ }
+
   calculations = prevState => {
     const { invest, equity, pre, post, currentFocus, previousFocus } = this.state
     let newState = Object.assign({}, this.state)
@@ -63,80 +97,169 @@ class Calculator extends Component {
     const items = [currentKey, prevKey]
 
     if (this.checkIncluding(items, 'invest', 'equity')) {
-    
-      if (parseFloat(invest) > 0 && parseFloat(equity) > 0) {
+      if (invest.length && equity.length) {
        
        let newPost = (parseFloat(invest) / parseFloat(equity)) * 100
        let newPre = parseFloat(newPost) - parseFloat(invest)
-       if (invest.length === 1 && equity.length >= 2) {
-         newPost = newPost.toString().slice(0, (newPost.toString().indexOf('.')) + 3)
-         newPre = newPre.toString().slice(0, (newPre.toString().indexOf('.')) + 3)
+       
+       newPost = this.roundNumber(newPost)
+       newPre = this.roundNumber(newPre)
+       if (newPost % 1 === 0 ) {
+         newPost = parseInt(newPost)
        }
+       if (newPre % 1 === 0) {
+         newPre = parseInt(newPre)
+       }
+
+      newPost = newPost.toString()
+      newPre = newPre.toString()
+      
         newState.post = newPost
         newState.pre = newPre
       }
     } else if (this.checkIncluding(items, 'invest', 'pre')) {
 
-      newState.post = parseFloat(invest) +  parseFloat(pre)
+      if (invest.length && pre.length) {
+        let newPost = parseFloat(invest) + parseFloat(pre)
+        let newEquity = (parseFloat(invest) / parseFloat(newPost)) * 100
+        newPost = this.roundNumber(newPost)
+        newEquity = this.roundNumber(newEquity)
+        if (newPost % 1 === 0) {
+          newPost = parseInt(newPost)
+        }
+        if (newEquity % 1 === 0) {
+          newEquity = parseInt(newEquity)
+        }
 
-      let newEquity = (parseFloat(invest) / parseFloat(newState.post)) * 100
-      newEquity = newEquity.toString().slice(0, (newEquity.toString().indexOf('.')) + 5)
-      newState.equity = newEquity
+        newPost = newPost.toString()
+        newEquity = newEquity.toString()
+
+        newState.post = newPost
+        newState.equity = newEquity
+      }
+
 
     } else if (this.checkIncluding(items, 'invest', 'post')) {
-    
-      if (parseFloat(invest) > 0 && parseFloat(post) > 0) {
+      if (invest.length && post.length) {
+
         let newEquity = (parseFloat(invest) / parseFloat(post)) * 100
-        newEquity = newEquity.toString().slice(0, (newEquity.toString().indexOf('.')) + 7)
-        newState.equity = newEquity
-        newState.pre = parseFloat(newState.post) - parseFloat(invest)
+        let newPre = parseFloat(newState.post) - parseFloat(invest)
+        
+        newEquity = this.roundNumber(newEquity)
+        newPre = this.roundNumber(newPre)
+        
+        if (newEquity % 1 === 0) {
+          newEquity = parseInt(newEquity)
+        }
+        if (newPre % 1 === 0) {
+          newPre = parseInt(newPre)
+        }
+        newState.equity =  newEquity.toString()
+        newState.pre = newPre.toString()
       }
     }
     else if (this.checkIncluding(items, 'equity', 'pre')) {
     
-      if (parseFloat(equity) > 0 && parseFloat(equity) > 0) {
+      if (equity.length && pre.length) {
         let newPost = 100 * parseFloat(pre) / (100 - parseFloat(equity))
-        newPost = newPost.toString().slice(0, (newPost.toString().indexOf('.')) + 3)
+        let newInvest = (parseFloat(equity) * parseFloat(newPost)) / 100
+        
+        newPost = this.roundNumber(newPost)
+        newInvest = this.roundNumber(newInvest)
+        if (newPost % 1 === 0) {
+          newPost = parseInt(newPost)
+        }
+        if (newInvest % 1 === 0) {
+          newInvest = parseInt(newInvest)
+        }
+        newPost = newPost.toString()
+        newInvest = newInvest.toString()
+
         newState.post = newPost
-        let newInvest = (parseFloat(equity) * parseFloat(newState.post)) / 100
-        newState.invest = newInvest.toString().slice(0, (newInvest.toString().indexOf('.')) + 3)
+        newState.invest = newInvest
       }
     }
     else if (this.checkIncluding(items, 'pre', 'post')) {
     
-      if (parseFloat(pre) > 0 && parseFloat(post) > 0) {
-        newState.invest = parseFloat(post) - parseFloat(pre)
+      if (pre.length && post.length) {
+        let newInvest = parseFloat(post) - parseFloat(pre)
+        let newEquity = (parseFloat(newInvest) / parseFloat(post)) * 100
 
-        let newEquity = (parseFloat(newState.invest) / parseFloat(post)) * 100
-        newEquity = newEquity.toString().slice(0, (newEquity.toString().indexOf('.')) + 4)
+        newInvest = this.roundNumber(newInvest)
+        newEquity = this.roundNumber(newEquity)
+        if (newInvest % 1 === 0) {
+          newInvest = parseInt(newInvest)
+        }
+        if (newEquity % 1 === 0) {
+          newEquity = parseInt(newEquity)
+        }
+        newInvest = newInvest.toString()
+        newEquity = newEquity.toString()
+
+        newState.invest = newInvest
         newState.equity = newEquity
       }
     }
     else if (this.checkIncluding(items, 'post', 'equity')) {
+    if (post.length && equity.length) {
+
+      let newInvest = (parseFloat(post) * parseFloat(equity)) / 100
+      let newPre = parseFloat(post) - parseFloat(newInvest)
+
+      newInvest = this.roundNumber(newInvest)
+      newPre = this.roundNumber(newPre)
+
+      if (newInvest % 1 === 0) {
+        newInvest = parseInt(newInvest)
+      }
+      if (newPre % 1 === 0) {
+        newPre = parseInt(newPre)
+      }
+
+      newInvest = newInvest.toString()
+      newPre = newPre.toString()
+
+      
+      newState.invest = newInvest
+      newState.pre = newPre
+    }
     
-      newState.invest = (parseFloat(post) * parseFloat(equity)) / 100
-      newState.pre = parseFloat(post) - parseFloat(newState.invest)
     } else {
       console.log('Nothing')
-    }      
+    }
+
+    let addZeroKeys = ['invest', 'equity', 'pre', 'post']
+    addZeroKeys = this.removeArray(addZeroKeys, [currentFocus, previousFocus])
+
+    for (let index = 0; index < addZeroKeys.length; index++) {
+      let key = addZeroKeys[index]
+      newState[key] = this.addZero(newState[key])
+    }
       
-      this.setState({
-        invest: newState.invest.toString(),
-        equity: newState.equity.toString(),
-        pre: newState.pre.toString(),
-        post: newState.post.toString(),
-        currentFocus,
-        isCalculating: false
-      })
+    this.setState({
+      invest: newState.invest.toString(),
+      equity: newState.equity.toString(),
+      pre: newState.pre.toString(),
+      post: newState.post.toString(),
+      currentFocus,
+      isCalculating: false
+    })
+  }
+
+  checkContainNumber = (currentFocus) => {
+    const currentValue = this.state[currentFocus]
+    return currentValue.length ? true : false
   }
   
 
   setCurrentFocus = name => {
-    const { currentFocus } = this.state
+    const { currentFocus, previousFocus } = this.state
     if (currentFocus !== name) {
+      const newPrevFocus = this.checkContainNumber(currentFocus) ? currentFocus : previousFocus
+
       this.setState({
         currentFocus: name,
-        previousFocus: currentFocus
+        previousFocus: newPrevFocus
       })
     }
   }
@@ -173,7 +296,7 @@ class Calculator extends Component {
         title='Equity'
         unit='%'
         onChangeText={text => this.setState({ equity: text })}
-        value={equity}
+        value={newEquity}
         ref={ref => this.equityRef = ref}
         onSetCurrentFocus={this.setCurrentFocus}
         name='equity'
@@ -206,9 +329,11 @@ class Calculator extends Component {
     )
   }
 
+
   renderPost = _ => {
     const { post } = this.state
     let newPost = this.numberWithCommas(post)
+  
     return (
       <Input
         title='Post'
