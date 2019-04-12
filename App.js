@@ -8,11 +8,17 @@
 
 import React, {Component} from 'react';
 import { View, StyleSheet } from 'react-native';
-import Constant from './src/utils/Constants';
+import SplashScreen from 'react-native-splash-screen'
+
 import AppNavigation from './src/navigations/index'
-import SplashScreen from './src/components/SplashScreen';
+
 
 export default class App extends Component {
+  componentWillMount() {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 800)
+  }
   render() {
       return (
         <View style={styles.container}>

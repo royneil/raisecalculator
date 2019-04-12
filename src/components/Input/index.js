@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState, useRef } from 'react'
+import React, { useState } from 'react'
 import {
   TextInput,
   StyleSheet,
@@ -6,7 +6,7 @@ import {
   Text,
   Platform,
   Keyboard,
-  TouchableOpacity
+  NativeModules
 } from 'react-native'
 import Constant from '../../utils/Constants';
 
@@ -29,8 +29,12 @@ const Input = React.forwardRef((props, ref) => {
             keyboardType={'numeric'}
             onFocus={_ => {
               Keyboard.dismiss()
+              if (Platform.OS === 'android') {
+                NativeModules.KeyboardFunctionalities.hideKeyboard()
+              }
               setInput({ isFocus: true })
-              props.onSetCurrentFocus(props.name)  
+              props.onSetCurrentFocus(props.name) 
+              
             }}
               onBlur={_ => {
                 Keyboard.dismiss()

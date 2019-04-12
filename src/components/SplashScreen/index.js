@@ -3,6 +3,7 @@ import { TouchableOpacity, StyleSheet, Image } from 'react-native'
 
 export default class SplashScreen extends Component {
   componentDidMount () {
+    
     setTimeout(() => {
       this.props.navigation.navigate('Calculator')
     }, 3000)
